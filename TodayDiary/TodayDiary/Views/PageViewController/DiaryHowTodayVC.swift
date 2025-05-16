@@ -1,5 +1,5 @@
 //
-//  DiaryGoodVC.swift
+//  DailyHowVC.swift
 //  TodayDiary
 //
 //  Created by 서정원 on 4/30/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class DiaryGoodVC: UIViewController {
+class DiaryHowTodayVC: UIViewController {
     var inputText: String {
         textView.text
     }
@@ -15,7 +15,7 @@ class DiaryGoodVC: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "오늘 좋았던 점 혹은 아쉬웠던 점을 작성해보세요 !"
+        label.text = "오늘 어떤 하루를 보내셨나요 ?"
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
         label.font = .boldSystemFont(ofSize: 20)
@@ -25,18 +25,23 @@ class DiaryGoodVC: UIViewController {
     
     private let textView = UITextView.makeDiaryTextView()
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        textView.delegate = self
         setupUI()
         setupTitleAndTextViewLayout(titleLabel: titleLabel, textView: textView)
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
     }
     
     private func setupUI() {
         view.backgroundColor = .mainBackgroundColor
     }
+}
+
+extension DiaryHowTodayVC: UITextViewDelegate {
+    
 }

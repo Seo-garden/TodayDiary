@@ -11,8 +11,12 @@ class DiaryEmojiVC: UIViewController {
     private let emojis = ["😊", "😢", "😍", "😎", "😡", "🥳", "😴", "🤔", "😱"]
     private var selectedEmojiIndex: Int?
     private let identifier = "EmojiCell"
+    
+    var inputText: String {
+        selectedEmojiLabel.text ?? ""
+    }
     //MARK: - Property
-    private let todayLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "오늘 하루를 이모지로 표현해보세요 "
@@ -54,7 +58,7 @@ class DiaryEmojiVC: UIViewController {
         return view
     }()
     
-    private let selectedEmojiLabel: UILabel = {
+    let selectedEmojiLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .systemFont(ofSize: 28)
@@ -70,27 +74,31 @@ class DiaryEmojiVC: UIViewController {
         emojiCollectionView.delegate = self
     }
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
+    
     private func setupUI() {
         view.backgroundColor = .mainBackgroundColor
         
-        view.addSubview(todayLabel)
+        view.addSubview(titleLabel)
         view.addSubview(emojiCollectionView)
         view.addSubview(selectedEmojiView)
         selectedEmojiView.addSubview(selectedEmojiLabel)
         
         NSLayoutConstraint.activate([
-            todayLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            todayLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            todayLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            emojiCollectionView.topAnchor.constraint(equalTo: todayLabel.bottomAnchor, constant: 20),
+            emojiCollectionView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
             emojiCollectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 10),
             emojiCollectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10),
             emojiCollectionView.heightAnchor.constraint(equalToConstant: 120),
             
             selectedEmojiView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
             selectedEmojiView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            selectedEmojiView.leadingAnchor.constraint(equalTo: todayLabel.trailingAnchor, constant: -60),
+            selectedEmojiView.leadingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: -60),
             
             selectedEmojiLabel.centerXAnchor.constraint(equalTo: selectedEmojiView.centerXAnchor),
             selectedEmojiLabel.centerYAnchor.constraint(equalTo: selectedEmojiView.centerYAnchor)

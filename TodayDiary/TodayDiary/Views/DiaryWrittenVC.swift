@@ -13,5 +13,4 @@ class DiaryWrittenVC: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .red
     }
-
 }

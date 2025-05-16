@@ -11,6 +11,11 @@ class DiaryPageVC: UIPageViewController {
     private var pages: [UIViewController] = []
     private var currentIndex: Int = 0
     
+    private let emojiPage = DiaryEmojiVC()
+    private let howTodayPage = DiaryHowTodayVC()
+    private let goodPointPage = DiaryGoodVC()
+    private let improvementPage = DiaryImprovementVC()
+    
     //MARK: - Property
     private lazy var cancelButton: UIBarButtonItem = {
         let button = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
@@ -22,6 +27,7 @@ class DiaryPageVC: UIPageViewController {
         super.viewDidLoad()
         
         delegate = self
+        improvementPage.delegate = self
         dataSource = self
         
         setupNavigation()
@@ -34,16 +40,7 @@ class DiaryPageVC: UIPageViewController {
         title = DateFormatter.todayString()
     }
     
-    private func setupUI() {
-        
-    }
-    
     private func setupPages() {
-        let emojiPage = DiaryEmojiVC()
-        let howTodayPage = DailyHowVC()
-        let goodPointPage = DiaryGoodVC()
-        let improvementPage = DiaryImprovementVC()
-        
         pages = [emojiPage, howTodayPage, goodPointPage, improvementPage]
         
         if let firstPage = pages.first {
@@ -54,6 +51,8 @@ class DiaryPageVC: UIPageViewController {
     @objc private func cancelButtonTapped() {
         dismiss(animated: true)
     }
+    
+    
 }
 
 extension DiaryPageVC: UIPageViewControllerDataSource {
@@ -87,5 +86,13 @@ extension DiaryPageVC: UIPageViewControllerDelegate {
            let index = pages.firstIndex(of: visibleViewController) {
             currentIndex = index
         }
+    }
+}
+
+extension DiaryPageVC: DiarySaveDelegate {
+    func saveDiary() {
+        CoreDataManager.shared.saveDiary(currentDay: Date(), emoji: emojiPage.inputText, howToday: howTodayPage.inputText, good: goodPointPage.inputText, improve: improvementPage.textInput)
+        
+        print("CoreDataManager 저장 완료")
     }
 }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23507" systemVersion="24E263" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="Entity" representedClassName="Entity" syncable="YES">
+        <attribute name="currentDay" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="emoji" optional="YES" attributeType="String"/>
+        <attribute name="good" optional="YES" attributeType="String"/>
+        <attribute name="howToday" optional="YES" attributeType="String"/>
+        <attribute name="improve" optional="YES" attributeType="String"/>
+    </entity>
+</model>

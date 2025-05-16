@@ -5,6 +5,7 @@
 //  Created by 서정원 on 4/9/25.
 //
 
+import CoreData
 import UIKit
 
 class DiaryListVC: UIViewController {
@@ -34,6 +35,24 @@ class DiaryListVC: UIViewController {
         return stackView
     }()
     
+    private lazy var diaryLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = ""
+        label.numberOfLines = 0
+        label.backgroundColor = .labelBackgroundColor
+        label.textAlignment = .center
+        label.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        label.layer.cornerRadius = 18
+        label.layer.masksToBounds = true
+        label.isUserInteractionEnabled = true
+        
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(writtenVCTapped))
+        label.addGestureRecognizer(gesture)
+        
+        return label
+    }()
+    
     private lazy var plusButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -50,31 +69,10 @@ class DiaryListVC: UIViewController {
         return button
     }()
     
-    private func mockData() {
-        for i in 0...30 {
-            lazy var label = UILabel()
-            label.translatesAutoresizingMaskIntoConstraints = false
-            label.text = "탈모빔 \(i)"
-            label.numberOfLines = 0
-            label.backgroundColor = .labelBackgroundColor
-            label.textAlignment = .center
-            label.heightAnchor.constraint(equalToConstant: 36).isActive = true
-            label.layer.cornerRadius = 18
-            label.layer.masksToBounds = true
-            label.isUserInteractionEnabled = true
-            
-            let gesture = UITapGestureRecognizer(target: self, action: #selector(writtenVCTapped))
-            label.addGestureRecognizer(gesture)
-            
-            contentStackView.addArrangedSubview(label)
-        }   
-    }
-    
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        mockData()
         setupUI()
         setupNavigation()
     }
@@ -82,7 +80,6 @@ class DiaryListVC: UIViewController {
     //plusButton 광클 방지
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
         plusButton.isEnabled = true
     }
     
@@ -96,6 +93,7 @@ class DiaryListVC: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(contentStackView)
+        contentStackView.addArrangedSubview(diaryLabel)
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
@@ -135,13 +133,12 @@ class DiaryListVC: UIViewController {
         }
     }
     
-    // MARK: - Actions    
+    // MARK: - Actions
     @objc private func didTapPlusButton() {
         let diaryVC = DiaryPageVC()
         plusButton.isEnabled = false
-        DispatchQueue.main.async {
-            self.navigationController?.pushViewController(diaryVC, animated: true)
-        }
+        
+        self.navigationController?.pushViewController(diaryVC, animated: true)
     }
     
     @objc private func writtenVCTapped() {
@@ -149,4 +146,5 @@ class DiaryListVC: UIViewController {
         diaryVC.modalPresentationStyle = .fullScreen
         present(diaryVC, animated: true)
     }
+    
 }

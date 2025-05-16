@@ -39,7 +39,7 @@ class DiaryCalendarVC: UIViewController {
         button.layer.shadowOpacity = 0.2
         button.layer.shadowOffset = CGSize(width: 0, height: 4)
         
-        button.addTarget(self, action: #selector(didTapPlusButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -83,7 +83,7 @@ class DiaryCalendarVC: UIViewController {
         ])
     }
     
-    private func getStringToDate(strDate: String) -> Date {
+    open func getStringToDate(strDate: String) -> Date {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         dateFormatter.timeZone = NSTimeZone(name: "Ko_KR") as? TimeZone
@@ -95,7 +95,7 @@ class DiaryCalendarVC: UIViewController {
         print("설정 버튼 탭")
     }
     
-    @objc private func didTapPlusButton() {
+    @objc private func plusButtonTapped() {
         let pageVC = DiaryPageVC(transitionStyle: .scroll, navigationOrientation: .horizontal)
         
         let navController = UINavigationController(rootViewController: pageVC)
@@ -114,7 +114,3 @@ extension DiaryCalendarVC: UICalendarSelectionSingleDateDelegate {
         }
     }
 }
-
-//#Preview {
-//    DiaryCalendarVC()
-//}
