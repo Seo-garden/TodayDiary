@@ -9,6 +9,7 @@ import CoreData
 import UIKit
 
 class DiaryListVC: UIViewController {
+    private var diaries: [Entity] = []
     // MARK: - Property
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -80,7 +81,8 @@ class DiaryListVC: UIViewController {
     //plusButton 광클 방지
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        plusButton.isEnabled = true
+        updatePlusButtonState()
+        loadDiaries()
     }
     
     // MARK: - SetupUI
@@ -93,7 +95,6 @@ class DiaryListVC: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(contentStackView)
-        contentStackView.addArrangedSubview(diaryLabel)
         
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
@@ -133,18 +134,66 @@ class DiaryListVC: UIViewController {
         }
     }
     
+    //MARK: - Methods
+    private func loadDiaries() {
+        diaries = CoreDataManager.shared.fetchDiaries()
+        updateUI()
+    }
+    
+    private func updateUI() {
+        contentStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        
+        for diary in diaries {
+            if let date = diary.currentDay {
+                let dateLabel = createDateLabel(date: date)
+                contentStackView.addArrangedSubview(dateLabel)
+            }
+        }
+    }
+    
+    private func createDateLabel(date: Date) -> UILabel {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
+        label.text = dateFormatter.string(from: date)
+        
+        label.backgroundColor = .labelBackgroundColor
+        label.textAlignment = .center
+        label.layer.cornerRadius = 18
+        label.layer.masksToBounds = true
+        label.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        
+        label.isUserInteractionEnabled = true
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(writtenVCTapped))
+        label.addGestureRecognizer(gesture)
+        
+        return label
+    }
+
+    private func updatePlusButtonState() {
+        let hasTodayDiary = CoreDataManager.shared.hasDiaryDate(date: Date())
+        plusButton.isEnabled = !hasTodayDiary
+        plusButton.alpha = hasTodayDiary ? 0.5 : 1.0 // 비활성화 상태를 시각적으로 표시
+    }
+    
     // MARK: - Actions
     @objc private func didTapPlusButton() {
+        guard !CoreDataManager.shared.hasDiaryDate(date: Date()) else { return }
         let diaryVC = DiaryPageVC()
-        plusButton.isEnabled = false
         
         self.navigationController?.pushViewController(diaryVC, animated: true)
     }
     
-    @objc private func writtenVCTapped() {
-        let diaryVC = DiaryWrittenVC()
-        diaryVC.modalPresentationStyle = .fullScreen
-        present(diaryVC, animated: true)
+    @objc private func writtenVCTapped(_ sender: UITapGestureRecognizer) {
+        guard let label = sender.view as? UILabel, let dateText = label.text, let date = DateFormatter().date(from: dateText) else { return }
+        
+        if let diary = CoreDataManager.shared.fetchDiary(for: date) {
+            let readDiaryVC = ReadDiaryVC(diary: diary)
+            let navController = UINavigationController(rootViewController: readDiaryVC)
+            navController.modalPresentationStyle = .fullScreen
+            present(navController, animated: true)
+        }
     }
-    
 }

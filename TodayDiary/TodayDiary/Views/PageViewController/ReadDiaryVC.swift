@@ -1,43 +1,65 @@
 //
-//  DiaryPageViewController.swift
+//  DiaryWrittenVC.swift
 //  TodayDiary
 //
-//  Created by 서정원 on 4/30/25.
+//  Created by 서정원 on 4/29/25.
 //
 
+import CoreData
 import UIKit
 
-class DiaryPageVC: UIPageViewController {
+class ReadDiaryVC: UIPageViewController {
     private var pages: [UIViewController] = []
     private var currentIndex: Int = 0
+    private let diary: Entity
     
     private let emojiPage = DiaryEmojiVC()
     private let howTodayPage = DiaryHowTodayVC()
     private let goodPointPage = DiaryGoodVC()
     private let improvementPage = DiaryImprovementVC()
     
-    //MARK: - Property
-    private lazy var cancelButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(title: "취소", style: .plain, target: self, action: #selector(cancelButtonTapped))
+    private lazy var closeButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "닫기", style: .plain, target: self, action: #selector(closeButtonTapped))
         button.tintColor = .black
         return button
     }()
+    
+    private lazy var editButton: UIBarButtonItem = {
+        let button = UIBarButtonItem(title: "수정", style: .plain, target: self, action: #selector(editButtonTapped))
+        button.tintColor = .black
+        return button
+    }()
+    
+    init(diary: Entity) {
+        self.diary = diary
+        super.init(transitionStyle: .scroll, navigationOrientation: .horizontal)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         delegate = self
-        improvementPage.delegate = self
         dataSource = self
         
         setupNavigation()
         setupPages()
+        configurePages()
     }
     
     private func setupNavigation() {
         view.backgroundColor = .mainBackgroundColor
-        navigationItem.leftBarButtonItem = cancelButton
-        title = DateFormatter.todayString()
+        navigationItem.leftBarButtonItem = closeButton
+        navigationItem.rightBarButtonItem = editButton
+        
+        if let date = diary.currentDay {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy년 MM월 dd일"
+            title = dateFormatter.string(from: date)
+        }
     }
     
     private func setupPages() {
@@ -48,14 +70,30 @@ class DiaryPageVC: UIPageViewController {
         }
     }
     
-    @objc private func cancelButtonTapped() {
+    private func configurePages() {
+        emojiPage.selectedEmojiLabel.text = diary.emoji
+        howTodayPage.textView.text = diary.howToday
+        goodPointPage.textView.text = diary.good
+        improvementPage.textView.text = diary.improve
+        
+        // 읽기 전용으로 설정
+        emojiPage.emojiCollectionView.isUserInteractionEnabled = false
+        howTodayPage.textView.isEditable = false
+        goodPointPage.textView.isEditable = false
+        improvementPage.textView.isEditable = false
+        improvementPage.saveButton.isHidden = true
+    }
+    
+    @objc private func closeButtonTapped() {
         dismiss(animated: true)
     }
     
-    
+    @objc private func editButtonTapped() {
+        
+    }
 }
 
-extension DiaryPageVC: UIPageViewControllerDataSource {
+extension ReadDiaryVC: UIPageViewControllerDataSource {
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         guard let index = pages.firstIndex(of: viewController), index > 0 else { return nil }
         return pages[index - 1]
@@ -79,18 +117,12 @@ extension DiaryPageVC: UIPageViewControllerDataSource {
     }
 }
 
-extension DiaryPageVC: UIPageViewControllerDelegate {
+extension ReadDiaryVC: UIPageViewControllerDelegate {
     func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
         if completed,
            let visibleViewController = pageViewController.viewControllers?.first,
            let index = pages.firstIndex(of: visibleViewController) {
             currentIndex = index
         }
-    }
-}
-
-extension DiaryPageVC: DiarySaveDelegate {
-    func saveDiary() {
-        CoreDataManager.shared.saveDiary(currentDay: Date().strippedTime, emoji: emojiPage.inputText, howToday: howTodayPage.inputText, good: goodPointPage.inputText, improve: improvementPage.textInput)
     }
 }

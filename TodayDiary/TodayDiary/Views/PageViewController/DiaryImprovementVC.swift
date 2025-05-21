@@ -30,9 +30,9 @@ class DiaryImprovementVC: UIViewController {
         return label
     }()
     
-    private let textView = UITextView.makeDiaryTextView()
+    let textView = UITextView.makeDiaryTextView()
     
-    private lazy var saveButton: UIButton = {
+    lazy var saveButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
@@ -68,7 +68,6 @@ class DiaryImprovementVC: UIViewController {
     }
     
     @objc private func saveButtonTapped() {
-        print("debug: saveButtonTapped")
         delegate?.saveDiary()
         dismiss(animated: true)
     }

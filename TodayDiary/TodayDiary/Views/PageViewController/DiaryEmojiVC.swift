@@ -27,7 +27,7 @@ class DiaryEmojiVC: UIViewController {
         return label
     }()
     
-    private lazy var emojiCollectionView: UICollectionView = {
+    lazy var emojiCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         
@@ -46,14 +46,14 @@ class DiaryEmojiVC: UIViewController {
         return collectionView
     }()
     
-    private let selectedEmojiView: UIView = {
+    let selectedEmojiView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .black
         view.layer.cornerRadius = 20
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOffset = CGSize(width: 0, height: 2)
-        view.isHidden = true
+        view.isHidden = false
         
         return view
     }()

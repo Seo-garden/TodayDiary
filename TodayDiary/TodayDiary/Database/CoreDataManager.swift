@@ -36,7 +36,7 @@ class CoreDataManager {
     }
     
     //MARK: - Create
-    func saveDiary(currentDay: Date, emoji: String, howToday: String, good: String, improve: String) {
+    func saveDiary(currentDay: Date, emoji: String?, howToday: String?, good: String?, improve: String?) {
         let context = persistentContainer.viewContext
         let entity = Entity(context: context)
         
@@ -49,15 +49,59 @@ class CoreDataManager {
         saveContext()
     }
     
-    func readDiary(emoji: String, howToday: String, good: String, improve: String) {
+    func fetchDiaries() -> [Entity] {
         let context = persistentContainer.viewContext
-        let entity = Entity(context: context)
+        let fetchRequest: NSFetchRequest<Entity> = Entity.fetchRequest()
         
+        let sortDescriptor = NSSortDescriptor(key: "currentDay", ascending: false)
+        fetchRequest.sortDescriptors = [sortDescriptor]
         
-        entity.emoji = emoji
-        entity.howToday = howToday
-        entity.good = good
-        entity.improve = improve
+        do {
+            let diaries = try context.fetch(fetchRequest)
+            return diaries
+        } catch {
+            print("Error fetching diaries: \(error)")
+            return []
+        }
     }
+    
+    func hasDiaryDate(date: Date) -> Bool {
+        let context = persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<Entity> = Entity.fetchRequest()
         
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        
+        fetchRequest.predicate = NSPredicate(format: "currentDay >= %@ AND currentDay < %@", startOfDay as NSDate, endOfDay as NSDate)
+        
+        do {
+            let count = try context.count(for: fetchRequest)
+            return count > 0
+        } catch {
+            print("Error checking diary existence: \(error)")
+            return false
+        }
+    }
+    
+    func fetchDiary(for date: Date) -> Entity? {
+        let context = persistentContainer.viewContext
+
+        let fetchRequest: NSFetchRequest<Entity> = Entity.fetchRequest()
+        
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        
+        fetchRequest.predicate = NSPredicate(format: "currentDay >= %@ AND currentDay < %@", startOfDay as NSDate, endOfDay as NSDate)
+
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            return results.first
+        } catch {
+            print("Error fetching diary: \(error)")
+            return nil
+        }
+    }
 }

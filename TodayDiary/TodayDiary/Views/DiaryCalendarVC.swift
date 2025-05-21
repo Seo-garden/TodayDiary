@@ -54,6 +54,11 @@ class DiaryCalendarVC: UIViewController {
         setupUI()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updatePlusButtonState()
+    }
+    
     private func setupNavigation() {
         navigationItem.title = "캘린더"
         navigationItem.rightBarButtonItem = settingButton
@@ -91,6 +96,12 @@ class DiaryCalendarVC: UIViewController {
         return dateFormatter.date(from: strDate)!
     }
     
+    private func updatePlusButtonState() {
+        let hasTodayDiary = CoreDataManager.shared.hasDiaryDate(date: Date())
+        plusButton.isEnabled = !hasTodayDiary
+        plusButton.alpha = hasTodayDiary ? 0.5 : 1.0 // 비활성화 상태를 시각적으로 표시
+    }
+    
     @objc private func settingButtonTapped() {
         print("설정 버튼 탭")
     }
@@ -100,17 +111,21 @@ class DiaryCalendarVC: UIViewController {
         
         let navController = UINavigationController(rootViewController: pageVC)
         navController.modalPresentationStyle = .fullScreen
-        
         present(navController, animated: true)
     }
 }
 
 extension DiaryCalendarVC: UICalendarSelectionSingleDateDelegate {
     func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
-        if let _ = dateComponents {
-            let diaryVC = DiaryWrittenVC()
-            diaryVC.modalPresentationStyle = .fullScreen
-            present(diaryVC, animated: true)
+        if let dateComponents = dateComponents, let date = Calendar.current.date(from: dateComponents) {        //해당 날짜로 작성된 일기가 있다면
+            if CoreDataManager.shared.hasDiaryDate(date: date) {
+                if let diary = CoreDataManager.shared.fetchDiary(for: date) {
+                    let readDiaryVC = ReadDiaryVC(diary: diary)
+                    let navController = UINavigationController(rootViewController: readDiaryVC)
+                    navController.modalPresentationStyle = .fullScreen
+                    present(navController, animated: true)
+                }
+            }
         }
     }
 }

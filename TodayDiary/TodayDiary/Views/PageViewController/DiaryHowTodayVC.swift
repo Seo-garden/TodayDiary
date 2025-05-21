@@ -23,7 +23,7 @@ class DiaryHowTodayVC: UIViewController {
         return label
     }()
     
-    private let textView = UITextView.makeDiaryTextView()
+    let textView = UITextView.makeDiaryTextView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
