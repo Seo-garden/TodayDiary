@@ -187,7 +187,11 @@ class DiaryListVC: UIViewController {
     }
     
     @objc private func writtenVCTapped(_ sender: UITapGestureRecognizer) {
-        guard let label = sender.view as? UILabel, let dateText = label.text, let date = DateFormatter().date(from: dateText) else { return }
+        guard let label = sender.view as? UILabel, let dateText = label.text else { return }
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy년MM월dd일"
+        guard let date = dateFormatter.date(from: dateText) else { print("날짜 파싱 실패"); return }
         
         if let diary = CoreDataManager.shared.fetchDiary(for: date) {
             let readDiaryVC = ReadDiaryVC(diary: diary)
