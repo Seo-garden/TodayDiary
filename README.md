@@ -7,7 +7,7 @@
 ## 🔮 핵심 기능
 <table>
   <tr>
-    <td><img src="https://github.com/Seo-garden/TodayDiary/ScreenRecording_05-22-2025 16-15-01_1.mp4" width="200"></td>
+    <td><img src="https://github.com/Seo-garden/TodayDiary/ScreenRecording_05-22-2025 16-15-01_1.MP4" width="200"></td>
     <td>
       <ul>
         <li>오늘 날짜에 일기를 작성할 수 있습니다.</li>
