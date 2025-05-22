@@ -91,6 +91,6 @@ extension DiaryPageVC: UIPageViewControllerDelegate {
 
 extension DiaryPageVC: DiarySaveDelegate {
     func saveDiary() {
-        CoreDataManager.shared.saveDiary(currentDay: Date().strippedTime, emoji: emojiPage.inputText, howToday: howTodayPage.inputText, good: goodPointPage.inputText, improve: improvementPage.textInput)
+        CoreDataManager.shared.saveDiary(currentDay: Date().strippedTime, emoji: emojiPage.inputText, howToday: howTodayPage.inputText, good: goodPointPage.inputText, improve: improvementPage.inputText)
     }
 }

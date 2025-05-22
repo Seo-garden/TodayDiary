@@ -12,7 +12,7 @@ protocol DiarySaveDelegate: AnyObject {
 }
 
 class DiaryImprovementVC: UIViewController {
-    var textInput: String {
+    var inputText: String {
         textView.text
     }
     

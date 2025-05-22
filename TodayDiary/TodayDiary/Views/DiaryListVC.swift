@@ -194,7 +194,7 @@ class DiaryListVC: UIViewController {
         guard let date = dateFormatter.date(from: dateText) else { print("날짜 파싱 실패"); return }
         
         if let diary = CoreDataManager.shared.fetchDiary(for: date) {
-            let readDiaryVC = ReadDiaryVC(diary: diary)
+            let readDiaryVC = RUDDiary(diary: diary)
             let navController = UINavigationController(rootViewController: readDiaryVC)
             navController.modalPresentationStyle = .fullScreen
             present(navController, animated: true)

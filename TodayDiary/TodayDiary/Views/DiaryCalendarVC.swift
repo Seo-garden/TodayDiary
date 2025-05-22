@@ -120,7 +120,7 @@ extension DiaryCalendarVC: UICalendarSelectionSingleDateDelegate {
         if let dateComponents = dateComponents, let date = Calendar.current.date(from: dateComponents) {        //해당 날짜로 작성된 일기가 있다면
             if CoreDataManager.shared.hasDiaryDate(date: date) {
                 if let diary = CoreDataManager.shared.fetchDiary(for: date) {
-                    let readDiaryVC = ReadDiaryVC(diary: diary)
+                    let readDiaryVC = RUDDiary(diary: diary)
                     let navController = UINavigationController(rootViewController: readDiaryVC)
                     navController.modalPresentationStyle = .fullScreen
                     present(navController, animated: true)

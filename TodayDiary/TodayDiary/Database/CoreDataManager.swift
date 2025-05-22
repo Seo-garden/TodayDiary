@@ -65,7 +65,7 @@ class CoreDataManager {
         }
     }
     
-    func hasDiaryDate(date: Date) -> Bool {
+    func hasDiaryDate(date: Date) -> Bool {     //일기 존재 여부 판단
         let context = persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<Entity> = Entity.fetchRequest()
         
@@ -86,7 +86,6 @@ class CoreDataManager {
     
     func fetchDiary(for date: Date) -> Entity? {
         let context = persistentContainer.viewContext
-
         let fetchRequest: NSFetchRequest<Entity> = Entity.fetchRequest()
         
         let calendar = Calendar.current
@@ -94,7 +93,6 @@ class CoreDataManager {
         let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
         
         fetchRequest.predicate = NSPredicate(format: "currentDay >= %@ AND currentDay < %@", startOfDay as NSDate, endOfDay as NSDate)
-
         
         do {
             let results = try context.fetch(fetchRequest)
@@ -103,5 +101,20 @@ class CoreDataManager {
             print("Error fetching diary: \(error)")
             return nil
         }
+    }
+    
+    func updateDiary(diary: Entity, emoji: String?, howToday: String?, good: String?, improve: String?) {
+        diary.emoji = emoji
+        diary.howToday = howToday
+        diary.good = good
+        diary.improve = improve
+        
+        saveContext()
+    }
+    
+    func deleteDiary(diary: Entity) {
+        let context = persistentContainer.viewContext
+        context.delete(diary)
+        saveContext()
     }
 }
